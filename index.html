@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeMaster Quiz App</title>
+<style>
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px}
+.container{background:#fff;border-radius:20px;padding:30px 25px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeIn 0.5s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{text-align:center;color:#667eea;margin-bottom:15px;font-size:28px}
+.subtitle{text-align:center;color:#666;margin-bottom:25px;font-size:16px}
+button{width:100%;padding:16px;margin:8px 0;border:none;border-radius:12px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;font-size:17px;font-weight:600;cursor:pointer;transition:all 0.3s}
+button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(102,126,234,0.4)}
+button:active{transform:scale(0.98)}
+.hidden{display:none}
+#question{font-size:20px;color:#333;margin-bottom:20px;line-height:1.5;font-weight:500}
+.option-btn{background:#f0f4ff;color:#667eea;border:2px solid #667eea}
+.option-btn:hover{background:#667eea;color:white}
+.option-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none}
+#score{font-size:48px;text-align:center;color:#667eea;font-weight:bold;margin:20px 0}
+#progress{color:#666;text-align:center;margin-bottom:15px;font-size:14px}
+.result-text{text-align:center;font-size:20px;color:#333;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<!-- HOME PAGE -->
+<div class="container" id="home">
+  <h1>CodeMaster 🚀</h1>
+  <p class="subtitle">Test your coding knowledge!</p>
+  <p style="text-align:center;color:#555;margin-bottom:20px">10 Questions | MCQ Format | Instant Results</p>
+  <button onclick="startQuiz()">Start Quiz Now</button>
+</div>
+
+<!-- QUIZ PAGE -->
+<div class="container hidden" id="quiz">
+  <p id="progress">Question 1 of 10</p>
+  <h1 id="question">Loading...</h1>
+  <div id="options"></div>
+  <button onclick="nextQuestion()" id="nextBtn" class="hidden">Next Question →</button>
+</div>
+
+<!-- RESULT PAGE -->
+<div class="container hidden" id="result">
+  <h1>Quiz Complete! 🎉</h1>
+  <p class="result-text">Your Final Score</p>
+  <div id="score">0/10</div>
+  <p id="message" style="text-align:center;color:#666;margin-bottom:20px"></p>
+  <button onclick="restartQuiz()">Play Again</button>
+</div>
+
+<script>
+let questions = [
+  {q: "Which language structures web pages?", options: ["HTML", "CSS", "Python", "Java"], answer: 0},
+{q: "CSS stands for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Colorful Style Sheets", "Creative Style Sheets"], answer: 1},
+{q: "Which tag makes text bold?", options: ["<b>", "<i>", "<u>", "<p>"], answer: 0},
+{q: "JS stands for?", options: ["Java Source", "JavaScript", "Just Script", "Jungle Script"], answer: 1},
+{q: "Comment symbol in JavaScript?", options: ["//", "/*", "#", "--"], answer: 0},
+{q: "1 byte = ? bits", options: ["4", "8", "16", "32"], answer: 1},
+{q: "Java created by?", options: ["Microsoft", "Sun Microsystems", "Apple", "Google"], answer: 1},
+{q: "Link CSS file with which tag?", options: ["<script>", "<link>", "<style>", "<css>"], answer: 1},
+{q: "Python created by?", options: ["Guido van Rossum", "James Gosling", "Brendan Eich", "Dennis Ritchie"], answer: 0},
+{q: "Which is NOT programming language?", options: ["Python", "Java", "HTML", "C++"], answer: 2},
+{q: "Tag for paragraph?", options: ["<p>", "<para>", "<pg>", "<text>"], answer: 0},
+{q: "Fastest land animal?", options: ["Turtle", "Cheetah", "Horse", "Lion"], answer: 1},
+{q: "HTTP stands for?", options: ["Hyper Text Transfer Protocol", "High Tech Transfer Process", "Hyper Tool Transfer Protocol", "None"], answer: 0},
+{q: "Tag for heading size 1?", options: ["<h1>", "<head>", "<h6>", "<title>"], answer: 0},
+{q: "Which loop runs at least once?", options: ["for", "while", "do-while", "none"], answer: 2},
+{q: "C created by?", options: ["Bjarne Stroustrup", "Dennis Ritchie", "Guido van Rossum", "James Gosling"], answer: 1},
+{q: "Tag for line break?", options: ["<break>", "<br>", "<lb>", "<newline>"], answer: 1},
+{q: "RGB has how many colors?", options: ["2", "3", "4", "7"], answer: 1},
+{q: "Full form of URL?", options: ["Uniform Resource Locator", "Universal Resource Link", "Uniform Reference Link", "None"], answer: 0},
+{q: "Which is frontend language?", options: ["PHP", "MySQL", "JavaScript", "Python"], answer: 2},
+{q: "Tag for image?", options: ["<img>", "<image>", "<pic>", "<src>"], answer: 0},
+{q: "Sun rises from?", options: ["West", "East", "North", "South"], answer: 1},
+{q: "Array in JS declared by?", options: ["var arr = []", "var arr = {}", "var arr = ()", "var arr = <>"], answer: 0},
+{q: "National animal of India?", options: ["Lion", "Tiger", "Elephant", "Deer"], answer: 1},
+{q: "SQL stands for?", options: ["Structured Query Language", "Simple Query Logic", "Server Query Language", "None"], answer: 0},
+{q: "Tag for hyperlink?", options: ["<a>", "<link>", "<href>", "<url>"], answer: 0},
+{q: "Planet with rings?", options: ["Earth", "Mars", "Saturn", "Jupiter"], answer: 2},
+{q: "CSS property for text color?", options: ["font-color", "text-color", "color", "font-style"], answer: 2},
+{q: "Binary of 5?", options: ["101", "110", "100", "111"], answer: 0},
+{q: "Capital of Maharashtra?", options: ["Pune", "Mumbai", "Nagpur", "Nashik"], answer: 1},
+{q: "Tag for ordered list?", options: ["<ol>", "<ul>", "<li>", "<list>"], answer: 0},
+{q: "Which is not OS?", options: ["Windows", "Linux", "Chrome", "MacOS"], answer: 2},
+{q: "Function keyword in JS?", options: ["func", "function", "def", "method"], answer: 1},
+{q: "Red + Blue = ?", options: ["Green", "Purple", "Orange", "Black"], answer: 1},
+{q: "Tag for table row?", options: ["<tr>", "<td>", "<table>", "<row>"], answer: 0},
+{q: "Largest ocean?", options: ["Atlantic", "Indian", "Pacific", "Arctic"], answer: 2},
+{q: "Null data type in JS?", options: ["object", "null", "undefined", "both a and b"], answer: 3},
+{q: "Tag for unordered list?", options: ["<ol>", "<ul>", "<li>", "<list>"], answer: 1},
+{q: "CPU stands for?", options: ["Central Processing Unit", "Computer Processing Unit", "Central Program Unit", "None"], answer: 0},
+{q: "CSS for background color?", options: ["bgcolor", "background-color", "color-bg", "background"], answer: 1},
+{q: "World's tallest building?", options: ["Burj Khalifa", "Eiffel Tower", "Tokyo Tower", "Shanghai Tower"], answer: 0},
+{q: "Tag for form input?", options: ["<input>", "<form>", "<field>", "<box>"], answer: 0},
+{q: "1 KB = ? bytes", options: ["1000", "1024", "512", "2048"], answer: 1},
+{q: "Father of Computer?", options: ["Einstein", "Charles Babbage", "Newton", "Tesla"], answer: 1},
+{q: "Tag for bold + semantic?", options: ["<b>", "<strong>", "<bold>", "<s>"], answer: 1},
+{q: "Human body has how many bones?", options: ["206", "210", "200", "195"], answer: 0},
+{q: "Operator for 'equal to' in JS?", options: ["=", "==", "===", "both b and c"], answer: 3},
+{q: "Currency of Japan?", options: ["Yuan", "Yen", "Dollar", "Won"], answer: 1},
+{q: "Tag for italic text?", options: ["<i>", "<italic>", "<em>", "both a and c"], answer: 3},
+{q: "Internet invented by?", options: ["Tim Berners-Lee", "Bill Gates", "Steve Jobs", "Mark Zuckerberg"], answer: 0},
+{q: "Tag for subscript?", options: ["<sub>", "<sup>", "<low>", "<small>"], answer: 0},
+{q: "Largest planet?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: 2},
+{q: "Method to print in JS console?", options: ["print()", "console.log()", "echo()", "printf()"], answer: 1},
+{q: "National bird of India?", options: ["Peacock", "Parrot", "Sparrow", "Eagle"], answer: 0},
+{q: "Tag for superscript?", options: ["<sub>", "<sup>", "<up>", "<big>"], answer: 1},
+{q: "RAM stands for?", options: ["Read Access Memory", "Random Access Memory", "Run Access Memory", "None"], answer: 1},
+{q: "Speed of light?", options: ["3x10^8 m/s", "3x10^6 m/s", "3x10^10 m/s", "3x10^5 m/s"], answer: 0},
+{q: "Tag for horizontal line?", options: ["<hr>", "<line>", "<hl>", "<br>"], answer: 0},
+{q: "Father of WWW?", options: ["Tim Berners-Lee", "Bill Gates", "Steve Jobs", "Larry Page"], answer: 0},
+{q: "CSS property for font size?", options: ["font-size", "text-size", "size", "font-style"], answer: 0},
+{q: "Largest desert?", options: ["Sahara", "Thar", "Gobi", "Kalahari"], answer: 0},
+{q: "Which is version control?", options: ["Git", "Docker", "Node", "React"], answer: 0},
+{q: "Tag for list item?", options: ["<ol>", "<ul>", "<li>", "<item>"], answer: 2},
+{q: "Chemical symbol for Gold?", options: ["Go", "Gd", "Au", "Ag"], answer: 2},
+{q: "Keyword to define constant in JS?", options: ["var", "let", "const", "constant"], answer: 2},
+{q: "Longest river in world?", options: ["Nile", "Amazon", "Yangtze", "Mississippi"], answer: 0},
+{q: "Tag for dropdown list?", options: ["<select>", "<dropdown>", "<option>", "<list>"], answer: 0},
+{q: "IP stands for?", options: ["Internet Protocol", "Internal Protocol", "Interface Protocol", "None"], answer: 0},
+{q: "Tag for button?", options: ["<button>", "<btn>", "<click>", "<input type='button'>"], answer: 0},
+{q: "Currency of USA?", options: ["Dollar", "Euro", "Pound", "Rupee"], answer: 0},
+{q: "CSS property to center text?", options: ["text-align", "align-text", "center", "text-center"], answer: 0},
+{q: "Largest country by area?", options: ["China", "USA", "Russia", "Canada"], answer: 2},
+{q: "Method to get element by ID in JS?", options: ["getElementById()", "getId()", "querySelector()", "both a and c"], answer: 3},
+{q: "National flower of India?", options: ["Rose", "Lotus", "Sunflower", "Jasmine"], answer: 1},
+{q: "CSS property for border?", options: ["border-style", "border", "outline", "both a and b"], answer: 3},
+{q: "World's highest mountain?", options: ["K2", "Mount Everest", "Kangchenjunga", "Lhotse"], answer: 1},
+{q: "Which is backend language?", options: ["HTML", "CSS", "Node.js", "JavaScript"], answer: 2},
+{q: "Tag for video?", options: ["<media>", "<video>", "<movie>", "<mp4>"], answer: 1},
+{q: "Father of AI?", options: ["Alan Turing", "John McCarthy", "Marvin Minsky", "Both a and b"], answer: 3},
+{q: "Tag for audio?", options: ["<sound>", "<audio>", "<music>", "<mp3>"], answer: 1},
+{q: "Oxygen chemical symbol?", options: ["Ox", "O", "Og", "Om"], answer: 1},
+{q: "CSS for rounded corners?", options: ["border-radius", "corner-radius", "round-border", "radius"], answer: 0},
+{q: "Currency of UK?", options: ["Euro", "Pound", "Dollar", "Franc"], answer: 1},
+{q: "Tag for checkbox?", options: ["<input type='checkbox'>", "<checkbox>", "<check>", "<input type='check'>"], answer: 0},
+{q: "Smallest prime number?", options: ["0", "1", "2", "3"], answer: 2},
+{q: "CSS property for margin?", options: ["padding", "margin", "spacing", "gap"], answer: 1},
+{q: "Largest continent?", options: ["Africa", "Asia", "North America", "Europe"], answer: 1},
+{q: "Method to convert string to number in JS?", options: ["parseInt()", "toNumber()", "convert()", "stringToInt()"], answer: 0},
+{q: "National sport of India?", options: ["Cricket", "Hockey", "Kabaddi", "Football"], answer: 1},
+{q: "Tag for radio button?", options: ["<input type='radio'>", "<radio>", "<option>", "<select>"], answer: 0},
+{q: "Which is NoSQL database?", options: ["MySQL", "MongoDB", "PostgreSQL", "Oracle"], answer: 1},
+{q: "CSS property for width?", options: ["size", "width", "w", "length"], answer: 1},
+{q: "Smallest country in world?", options: ["Monaco", "Maldives", "Vatican City", "San Marino"], answer: 2},
+{q: "Method to add item to array end in JS?", options: ["push()", "add()", "insert()", "append()"], answer: 0},
+{q: "Tag for metadata?", options: ["<meta>", "<data>", "<info>", "<head>"], answer: 0},
+{q: "DNS stands for?", options: ["Domain Name System", "Data Name Service", "Domain Network System", "None"], answer: 0},
+{q: "CSS property for height?", options: ["height", "h", "size", "length"], answer: 0},
+{q: "Longest day of year in Northern Hemisphere?", options: ["June 21", "Dec 21", "March 21", "Sept 21"], answer: 0}
+];
+
+let currentQ = 0;
+let score = 0;
+
+function startQuiz(){
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+
+  // Shuffle karke 10 random question
+  questions = questions.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+  currentQ = 0; // reset kar diya
+  score = 0; // reset kar diya
+  loadQuestion();
+}
+function loadQuestion(){
+  let q = questions[currentQ];
+  document.getElementById('progress').innerText = `Question ${currentQ+1} of ${questions.length}`;
+  document.getElementById ('question').innerText = q.q ;
+  let optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+
+  q.options.forEach((opt, i)=>{
+    optionsDiv.innerHTML += `<button class="option-btn" onclick="checkAnswer(${i})">${opt}</button>`;
+  });
+
+  document.getElementById('nextBtn').classList.add('hidden');
+}
+
+function checkAnswer(selected){
+  let q = questions[currentQ];
+  let buttons = document.querySelectorAll('.option-btn');
+
+  buttons.forEach((btn, i)=>{
+    btn.disabled = true;
+    if(i === q.answer) btn.style.background = 'linear-gradient(135deg,#4CAF50 0%,#45a049 100%)', btn.style.color = 'white';
+    else if(i === selected) btn.style.background = 'linear-gradient(135deg,#f44336 0%,#da190b 100%)', btn.style.color = 'white';
+  });
+
+  if(selected === q.answer) score++;
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ < questions.length){
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult(){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('score').innerText = `${score}/${questions.length}`;
+
+  let msg = score === 10? "Perfect! You're a Code Master! 🏆" :
+            score >= 5? "Good Job! Keep Learning! 💪" :
+            "Practice more! You can do it! 📚";
+  document.getElementById('message').innerText = msg;
+}
+
+function restartQuiz(){
+  currentQ = 0;
+  score = 0;
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('home').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
