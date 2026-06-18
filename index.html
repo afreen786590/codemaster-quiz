@@ -1,120 +1,121 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Codemaster Quiz</title>
+<title>10 Marks Quiz - 100 Q Bank</title>
 <style>
-body{font-family:Arial;background:#0f172a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
-.box{background:#1e293b;padding:30px;border-radius:15px;max-width:600px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-h2{color:#38bdf8;text-align:center}
-.q{font-size:18px;margin-bottom:20px}
-.btn{display:block;width:100%;padding:12px;margin:8px 0;background:#334155;border:none;border-radius:8px;color:#fff;font-size:16px;cursor:pointer;transition:0.3s}
-.btn:hover{background:#475569}
-.btn.correct{background:#22c55e!important}
-.btn.wrong{background:#ef4444!important}
-.score{text-align:center;font-size:20px;margin-top:20px;color:#fbbf24}
-#nextBtn{background:#3b82f6;margin-top:15px;display:none}
+body{font-family:'Segoe UI',Arial;background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+.quiz-box{background:#1e293b;padding:35px;border-radius:16px;max-width:650px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.4)}
+h2{color:#38bdf8;font-size:22px;margin-bottom:25px;line-height:1.5}
+#qno{color:#94a3b8;font-size:14px;margin-bottom:15px;font-weight:600}
+.option{background:#334155;padding:16px;margin:12px 0;border-radius:10px;cursor:pointer;transition:all 0.2s;border:2px solid transparent;font-size:16px}
+.option:hover{background:#475569;border-color:#38bdf8}
+.next-btn{background:#38bdf8;color:#0f172a;border:none;padding:14px 30px;border-radius:10px;cursor:pointer;margin-top:20px;font-size:16px;font-weight:600;width:100%}
+.next-btn:disabled{background:#475569;color:#64748b;cursor:not-allowed}
+.score{font-size:28px;color:#4ade80;text-align:center;margin-top:20px;font-weight:700}
+.restart-btn{background:#4ade80;color:#0f172a;border:none;padding:14px 30px;border-radius:10px;cursor:pointer;margin-top:15px;font-size:16px;font-weight:600;width:100%}
 </style>
 </head>
 <body>
-<div class="box">
-<h2>🧠 Codemaster Quiz</h2>
-<div id="quiz">
-<div class="q" id="question">Loading...</div>
+<div class="quiz-box">
+<div id="qno"></div>
+<h2 id="question"></h2>
 <div id="options"></div>
-<button class="btn" id="nextBtn" onclick="nextQ()">Next ➡️</button>
-</div>
-<div class="score" id="score"></div>
+<button class="next-btn" id="nextBtn" onclick="nextQ()" disabled>Next Question →</button>
+<div id="result" class="score"></div>
+<button class="restart-btn" id="restartBtn" onclick="restart()" style="display:none">🔄 Again Quiz De - Naye 10 Sawal</button>
 </div>
 
 <script>
+// ====== YAHAN APNE 100 SAWAL PASTE KAR DE BRO ======
 const questions = [
-{
-q: "HTML ka full form kya hai?",
-options: ["Hyper Text Markup Language", "High Tech Machine Language", "Home Tool Markup Language", "Hyperlink Text Machine Language"],
-answer: 0
-},
-{
-q: "CSS ka use kis liye hota hai?",
-options: ["Database ke liye", "Website design ke liye", "Server ke liye", "Logic ke liye"],
-answer: 1
-},
-{
-q: "JavaScript kya hai?",
-options: ["Coffee ka type", "Programming language", "Markup language", "Database"],
-answer: 1
-},
-{
-q: "Method to convert string to number in JS?",
-options: ["parseInt()", "toNumber()", "convert()", "stringToInt()"],
-answer: 0
-},
-{
-q: "National sport of India?",
-options: ["Cricket", "Hockey", "Kabaddi", "Football"],
-answer: 1
-},
-// YAHAN TU APNE 95 QUESTIONS AUR ADD KAR DE
-// Format same rakhna: q:"sawal", options:[4 options], answer: sahi option ka number 0 se 3
+{q:"JavaScript kya hai?",options:["Programming Language","Operating System","Browser","Database"],answer:0},
+{q:"HTML ka full form kya hai?",options:["Hyper Text Markup Language","High Tech Machine Language","Home Tool Markup Language","Hyperlink Text Mark Language"],answer:0},
+{q:"CSS kis liye use hota hai?",options:["Webpage Styling","Database Management","Server Logic","None"],answer:0},
+{q:"var, let, const me main difference kya hai?",options:["Scope","Speed","Syntax","Color"],answer:0},
+{q:"JavaScript me Array kaise declare karte hain?",options:["[]","{}","()","<>"],answer:0},
+
+// ====== YAHAN APNE.TXT FILE WALE 95 SAWAL PASTE KAR DE ======
+// Format: {q:"Sawal yahan",options:["Option1","Option2","Option3","Option4"],answer:0}
+// answer: 0 means Option1 sahi hai, 1 means Option2, 2 means Option3, 3 means Option4
+
+{q:"1. What is closure in JavaScript?",options:["Function with access to outer scope","A type of loop","Variable declaration","None of these"],answer:0},
+{q:"2. Difference between == and ===?",options:["=== checks type also","No difference","== is faster","None"],answer:0},
+{q:"3. What is hoisting in JS?",options:["Variables moved to top","Error in code","Type of loop","None"],answer:0},
+
+//... beech ke 92 sawal yahan daal de...
+
+// Last example:
+{q:"100. What is REST API?",options:["Representational State Transfer","Random Entry Storage Tool","Remote Execution System Tool","None"],answer:0}
 ];
+// ====== SAWAL YAHI KHATAM ======
 
-let current = 0;
-let score = 0;
-let shuffled = [];
+let current = 0, score = 0, quizQuestions = [], selected = false;
 
-// Shuffle function
-function shuffleArray(array) {
-for (let i = array.length - 1; i > 0; i--) {
-const j = Math.floor(Math.random() * (i + 1));
-[array[i], array[j]] = [array[j], array[i]];
-}
-return array;
+function shuffle(arr){
+return arr.sort(()=>Math.random()-0.5);
 }
 
-function startQuiz() {
-shuffled = shuffleArray([...questions]);
+function startQuiz(){
+score = 0;
+current = 0;
+selected = false;
+document.getElementById('result').innerHTML = '';
+document.getElementById('restartBtn').style.display = 'none';
+document.getElementById('nextBtn').style.display = 'block';
+// 100 me se random 10 sawal pick karega har baar
+quizQuestions = shuffle([...questions]).slice(0, 10);
 loadQ();
 }
 
-function loadQ() {
-if(current >= shuffled.length) {
-document.getElementById('quiz').innerHTML = `<div class="score">🎉 Quiz Khatam! Tera Score: ${score}/${shuffled.length}</div>`;
+function loadQ(){
+if(current >= quizQuestions.length){
+document.getElementById('result').innerHTML = `🎉 Quiz Khatam!<br>Score: ${score}/10`;
+document.getElementById('question').innerHTML = '';
+document.getElementById('options').innerHTML = '';
+document.getElementById('nextBtn').style.display = 'none';
+document.getElementById('qno').innerHTML = '';
+document.getElementById('restartBtn').style.display = 'block';
 return;
 }
-let q = shuffled[current];
-document.getElementById('question').innerText = `Q${current+1}. ${q.q}`;
-let opts = document.getElementById('options');
-opts.innerHTML = '';
-q.options.forEach((opt, i) => {
-let btn = document.createElement('button');
-btn.className = 'btn';
-btn.innerText = opt;
-btn.onclick = () => checkAns(i, btn);
-opts.appendChild(btn);
+selected = false;
+document.getElementById('nextBtn').disabled = true;
+document.getElementById('qno').innerHTML = `Question ${current+1} of 10`;
+document.getElementById('question').innerHTML = quizQuestions[current].q;
+document.getElementById('options').innerHTML = '';
+quizQuestions[current].options.forEach((opt,i)=>{
+let div = document.createElement('div');
+div.className = 'option';
+div.innerHTML = `${i+1}. ${opt}`;
+div.onclick = ()=>select(i,div);
+document.getElementById('options').appendChild(div);
 });
-document.getElementById('nextBtn').style.display = 'none';
 }
 
-function checkAns(i, btn) {
-let q = shuffled[current];
-let allBtns = document.querySelectorAll('.btn');
-allBtns.forEach(b => b.onclick = null);
-if(i == q.answer) {
-btn.classList.add('correct');
-score++;
-} else {
-btn.classList.add('wrong');
-allBtns[q.answer].classList.add('correct');
-}
-document.getElementById('nextBtn').style.display = 'block';
+function select(i,div){
+if(selected) return;
+selected = true;
+document.querySelectorAll('.option').forEach((o,j)=>{
+o.style.pointerEvents = 'none';
+if(j == quizQuestions[current].answer) o.style.background = '#22c55e';
+else if(j == i) o.style.background = '#ef4444';
+});
+if(i == quizQuestions[current].answer) score++;
+document.getElementById('nextBtn').disabled = false;
 }
 
-function nextQ() {
+function nextQ(){
 current++;
 loadQ();
 }
 
+function restart(){
+startQuiz();
+}
+
+// Page load hote hi quiz start
+startQuiz();
 </script>
 </body>
 </html>
