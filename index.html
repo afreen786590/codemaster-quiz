@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>10 Marks Quiz - 100 Q Bank</title>
+<title>10 Marks Quiz</title>
 <style>
 body{font-family:'Segoe UI',Arial;background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
-.quiz-box{background:#1e293b;padding:35px;border-radius:16px;max-width:650px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.4)}
-h2{color:#38bdf8;font-size:22px;margin-bottom:25px;line-height:1.5}
+.quiz-box{background:#1e293b;padding:35px;border-radius:16px;max-width:650px;width:100%}
+h2{color:#38bdf8;font-size:22px;margin-bottom:25px}
 #qno{color:#94a3b8;font-size:14px;margin-bottom:15px;font-weight:600}
-.option{background:#334155;padding:16px;margin:12px 0;border-radius:10px;cursor:pointer;transition:all 0.2s;border:2px solid transparent;font-size:16px}
-.option:hover{background:#475569;border-color:#38bdf8}
+.option{background:#334155;padding:16px;margin:12px 0;border-radius:10px;cursor:pointer;transition:0.2s}
+.option:hover{background:#475569;border:2px solid #38bdf8}
 .next-btn{background:#38bdf8;color:#0f172a;border:none;padding:14px 30px;border-radius:10px;cursor:pointer;margin-top:20px;font-size:16px;font-weight:600;width:100%}
-.next-btn:disabled{background:#475569;color:#64748b;cursor:not-allowed}
+.next-btn:disabled{background:#475569;color:#64748b}
 .score{font-size:28px;color:#4ade80;text-align:center;margin-top:20px;font-weight:700}
 .restart-btn{background:#4ade80;color:#0f172a;border:none;padding:14px 30px;border-radius:10px;cursor:pointer;margin-top:15px;font-size:16px;font-weight:600;width:100%}
 </style>
@@ -24,48 +24,33 @@ h2{color:#38bdf8;font-size:22px;margin-bottom:25px;line-height:1.5}
 <div id="options"></div>
 <button class="next-btn" id="nextBtn" onclick="nextQ()" disabled>Next Question →</button>
 <div id="result" class="score"></div>
-<button class="restart-btn" id="restartBtn" onclick="restart()" style="display:none">🔄 Again Quiz De - Naye 10 Sawal</button>
+<button class="restart-btn" id="restartBtn" onclick="restart()" style="display:none">🔄 Again Quiz De</button>
 </div>
 
 <script>
-// ====== YAHAN APNE 100 SAWAL PASTE KAR DE BRO ======
 const questions = [
 {q:"JavaScript kya hai?",options:["Programming Language","Operating System","Browser","Database"],answer:0},
 {q:"HTML ka full form kya hai?",options:["Hyper Text Markup Language","High Tech Machine Language","Home Tool Markup Language","Hyperlink Text Mark Language"],answer:0},
 {q:"CSS kis liye use hota hai?",options:["Webpage Styling","Database Management","Server Logic","None"],answer:0},
-{q:"var, let, const me main difference kya hai?",options:["Scope","Speed","Syntax","Color"],answer:0},
-{q:"JavaScript me Array kaise declare karte hain?",options:["[]","{}","()","<>"],answer:0},
-
-// ====== YAHAN APNE.TXT FILE WALE 95 SAWAL PASTE KAR DE ======
-// Format: {q:"Sawal yahan",options:["Option1","Option2","Option3","Option4"],answer:0}
-// answer: 0 means Option1 sahi hai, 1 means Option2, 2 means Option3, 3 means Option4
-
-{q:"1. What is closure in JavaScript?",options:["Function with access to outer scope","A type of loop","Variable declaration","None of these"],answer:0},
-{q:"2. Difference between == and ===?",options:["=== checks type also","No difference","== is faster","None"],answer:0},
-{q:"3. What is hoisting in JS?",options:["Variables moved to top","Error in code","Type of loop","None"],answer:0},
-
-//... beech ke 92 sawal yahan daal de...
-
-// Last example:
-{q:"100. What is REST API?",options:["Representational State Transfer","Random Entry Storage Tool","Remote Execution System Tool","None"],answer:0}
+{q:"var, let, const me main difference?",options:["Scope","Speed","Syntax","Color"],answer:0},
+{q:"Array kaise declare karte hain?",options:["[]","{}","()","<>"],answer:0},
+{q:"What is closure?",options:["Function + outer scope","Loop","Variable","None"],answer:0},
+{q:"== vs === difference?",options:["Type checking","Speed","Syntax","None"],answer:0},
+{q:"What is hoisting?",options:["Variables moved to top","Error","Loop","None"],answer:0},
+{q:"let vs var?",options:["Block scope","Speed","Color","None"],answer:0},
+{q:"What is REST API?",options:["Representational State Transfer","Random Entry","Remote Tool","None"],answer:0}
 ];
-// ====== SAWAL YAHI KHATAM ======
 
 let current = 0, score = 0, quizQuestions = [], selected = false;
 
-function shuffle(arr){
-return arr.sort(()=>Math.random()-0.5);
-}
+function shuffle(arr){return arr.sort(()=>Math.random()-0.5)}
 
 function startQuiz(){
-score = 0;
-current = 0;
-selected = false;
+score = 0; current = 0; selected = false;
 document.getElementById('result').innerHTML = '';
 document.getElementById('restartBtn').style.display = 'none';
 document.getElementById('nextBtn').style.display = 'block';
-// 100 me se random 10 sawal pick karega har baar
-quizQuestions = shuffle([...questions]).slice(0, 10);
+quizQuestions = shuffle([...questions]).slice(0, 10); // 10 me se 10 pick karega abhi
 loadQ();
 }
 
@@ -105,16 +90,8 @@ if(i == quizQuestions[current].answer) score++;
 document.getElementById('nextBtn').disabled = false;
 }
 
-function nextQ(){
-current++;
-loadQ();
-}
-
-function restart(){
-startQuiz();
-}
-
-// Page load hote hi quiz start
+function nextQ(){current++;loadQ()}
+function restart(){startQuiz()}
 startQuiz();
 </script>
 </body>
